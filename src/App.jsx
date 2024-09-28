@@ -13,6 +13,8 @@ import ConfirmUser from './views/ConfirmUser.jsx';
 
 // Public Routes
 import RecoverPasswordEmail from './views/RecoverPasswordEmail.jsx';
+import RecoverPasswordToken from './views/RecoverPasswordToken.jsx';
+import RecoverPasswordNew from './views/RecoverPasswordNew.jsx';
 import NotFound from './views/NotFound.jsx';
 
 export default function App() {
@@ -22,7 +24,7 @@ export default function App() {
     <>
       <BrowserRouter>
         <Routes>
-          
+
           {/* CRUD */}
           <Route path="/create" element={<Create />} />
           <Route path="/" element={<Loging />} />
@@ -36,9 +38,9 @@ export default function App() {
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
 
           {/* Public Routes */}
-          <Route path="/recoverPasswordEmail" element={<RecoverPasswordEmail />} />
-          {/* <Route path="/recoverPasswordToken/:token" element={<RecoverPasswordToken />} /> */}
-          {/* <Route path="/recoverPasswordNew/:token" element={<RecoverPasswordNew />} /> */}
+          <Route path="/recover-password" element={<RecoverPasswordEmail />} />
+          <Route path="/recover-password/:token" element={<RecoverPasswordToken />} />
+          <Route path="/recover-password" element={<RecoverPasswordNew />} />
           <Route path="*" element={<NotFound />} />
 
         </Routes>

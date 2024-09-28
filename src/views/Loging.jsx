@@ -44,7 +44,7 @@ export default function Loging() {
                 </label>
                 <div className="text-sm">
                   <NavLink
-                    to="/recoverPasswordEmail"
+                    to="/recover-password"
                     className="font-semibold leading-6 text-blue-600 hover:text-blue-500"
                   >
                     Olvidé mi Contraseña
