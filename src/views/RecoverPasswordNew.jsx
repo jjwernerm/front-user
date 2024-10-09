@@ -1,8 +1,7 @@
 import { useState } from 'react';
+import { useParams, NavLink } from "react-router-dom";
 import { PiSpinnerGapBold } from "react-icons/pi";
 import configAxios from '../config/axios.jsx';
-import { NavLink } from "react-router-dom";
-import { useParams } from 'react-router-dom';
 
 export default function RecoverPasswordToken() {
 

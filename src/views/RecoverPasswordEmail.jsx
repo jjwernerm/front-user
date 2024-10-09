@@ -5,7 +5,7 @@ import configAxios from '../config/axios.jsx';
 
 export default function RecoverPasswordEmail() {
 
-  const [email, setEmail] = useState('joannywerner@hotmail.com');
+  const [email, setEmail] = useState('');
   const [spinner, setSpinner] = useState(false);
   const [message, setMessage] = useState({});
 

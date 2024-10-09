@@ -1,8 +1,69 @@
-import { NavLink } from "react-router-dom";
-
+import { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { PiSpinnerGapBold } from "react-icons/pi";
 import configAxios from '../config/axios.jsx';
+import { useAuth } from '../hooks/useAuth.jsx';
 
 export default function Loging() {
+
+  const [email, setEmail] = useState('joannywerner@hotmail.com');
+  const [password, setPassword] = useState('123');
+  const [spinner, setSpinner] = useState(false);
+  const [message, setMessage] = useState({});
+
+  const { setAuth }  = useAuth();
+
+  const navigate = useNavigate();
+
+  const handleEmailValue = (e) => {
+    e.preventDefault();
+    const value = e.target.value.toLowerCase();
+    setEmail(value);
+  };
+
+  const handlePasswordValue = (e) => {
+    e.preventDefault();
+    const value = e.target.value;
+    setPassword(value);
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();    
+
+    try {
+
+      const url = '/loging';
+      const  { data } = await configAxios.post(url, { email, password });
+      localStorage.setItem('bearer_token', data.bearer_token);
+      setAuth(data);
+
+      setSpinner(true);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setSpinner(false);
+
+      navigate('/web-user');
+
+    } catch (error) {
+
+      setMessage({
+        msg: error.response?.data?.msg || 'Iniciar Sesión: No Exitosa',
+        display: true,
+        error: true,
+      });
+      setPassword('');
+
+    } finally {
+
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      setMessage({
+        msg: '',
+        error: '',
+        display: false,
+      });
+
+    };
+
+  };
 
   return (
 
@@ -15,7 +76,10 @@ export default function Loging() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          <form
+            className="space-y-6"
+            onSubmit={handleSubmit}
+          >
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Correo Electrónico
@@ -27,8 +91,10 @@ export default function Loging() {
                   type="email"
                   required
                   autoComplete="email"
+                  value={email}
+                  onChange={handleEmailValue}
                   className="block w-full rounded-md py-1.5 text-gray-900
-                  shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6
+                  shadow-sm pl-2 sm:text-sm sm:leading-6
                   border-0 outline-none
                   ring-1 ring-inset ring-gray-300
                   hover:ring-1 hover:ring-inset hover:ring-blue-600
@@ -58,8 +124,10 @@ export default function Loging() {
                   type="password"
                   required
                   autoComplete="current-password"
+                  value={password}
+                  onChange={handlePasswordValue}
                   className="block w-full rounded-md py-1.5 text-gray-900
-                  shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6
+                  shadow-sm pl-2 sm:text-sm sm:leading-6
                   border-0 outline-none
                   ring-1 ring-inset ring-gray-300
                   hover:ring-1 hover:ring-inset hover:ring-blue-600
@@ -73,9 +141,28 @@ export default function Loging() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
               >
-                Iniciar Sesión
+                {spinner ? (
+                  <div className="flex items-center">
+                    <PiSpinnerGapBold className="animate-spin h-5 w-5 text-white mr-2" />
+                    Iniciando sesión...
+                  </div>
+                ) : (
+                  'Iniciar Sesión'
+                )}
               </button>
             </div>
+
+            <div className={message.display ? 'block' : 'hidden'}>
+              <p
+                className={`
+            ${message.error ? 'text-red-600 bg-red-100' : 'text-green-600 bg-green-100'}
+            rounded-md p-2 text-center text-sm md:text-base 
+          `}
+              >
+                {message.msg}
+              </p>
+            </div>
+
           </form>
 
           <p className="mt-10 text-center text-sm">
