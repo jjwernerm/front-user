@@ -39,12 +39,20 @@ const AuthProvider = ({ children }) => {
     authUser();     
   }, []);
 
+  const logOut = () => {
+
+    localStorage.removeItem('bearer_token');
+    setAuth({});
+
+  };
+
   return (
     <AuthContext.Provider
       value={{
         auth,
         setAuth,
         loading,   // Pasamos el estado de loading al contexto
+        logOut,
       }}
     >
       {children}
