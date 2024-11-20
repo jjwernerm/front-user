@@ -9,6 +9,8 @@ export default function Create() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
   const [spinner, setSpinner] = useState(false);
   const [message, setMessage] = useState({});
 
@@ -52,8 +54,10 @@ export default function Create() {
         return;
       };
 
+      setPhone('Actualizar...')
+      setAddress('Actualizar...')
       const url = '/create';
-      const response = await configAxios.post(url, { name, email, password });
+      const response = await configAxios.post(url, { name, email, password, address, phone });
 
       setSpinner(true);
       await new Promise(resolve => setTimeout(resolve, 2000));
