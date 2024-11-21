@@ -4,7 +4,7 @@ import Header from '../components/Header.jsx';
 
 export default function Information() {
 
-  const { auth } = useAuth({});
+  const { auth } = useAuth({}); // Se extraen los datos de autenticación.
 
   return (
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from "react-router-dom";
 import { PiSpinnerGapBold } from "react-icons/pi";
-import configAxios from '../config/axios.jsx';
+import configAxios from '../config/axios.jsx'; // Importa la configuración personalizada de axios para hacer peticiones HTTP
 
 export default function RecoverPasswordEmail() {
 
@@ -9,47 +9,59 @@ export default function RecoverPasswordEmail() {
   const [spinner, setSpinner] = useState(false);
   const [message, setMessage] = useState({});
 
+  // Función para manejar el cambio de valor del campo de email
   const handleEmailValue = (e) => {
     e.preventDefault();
-    const value = e.target.value.toLowerCase();
-    setEmail(value);
+    const value = e.target.value.toLowerCase(); // Convierte el valor del email a minúsculas para evitar errores de mayúsculas
+    setEmail(value); // Actualiza el estado de email con el valor convertido
   };
 
+  // Función para manejar el envío del formulario (solicitud de recuperación de contraseña)
   const handleSubmit = async e => {
-    e.preventDefault();
+    e.preventDefault(); // Previene la acción predeterminada del formulario
 
     try {
 
+      // URL del endpoint para solicitar la recuperación de contraseña
       const url = '/recover-password';
+      // Realiza una petición POST a la API para enviar el email
       const response = await configAxios.post(url, { email });
 
+      // Muestra el spinner durante el proceso de envío
       setSpinner(true);
+      // Espera 2 segundos (simulando un proceso de espera)
       await new Promise(resolve => setTimeout(resolve, 2000));
+      // Detiene el spinner una vez que la operación se ha completado
       setSpinner(false);
 
+      // Limpia el valor del campo email después de la solicitud
       setEmail('');
 
+      // Establece el mensaje de éxito en el estado
       setMessage({
-        msg: response?.data?.msg || 'Email enviado con instrucciones: Exitoso',
-        display: true,
-        error: false,
+        msg: response?.data?.msg || 'Email enviado con instrucciones: Exitoso', // Mensaje de éxito, si lo hay
+        display: true, // Indica que el mensaje debe mostrarse
+        error: false, // Indica que no hubo error
       });
 
     } catch (error) {
 
+      // En caso de error, establece el mensaje de error en el estado
       setMessage({
-        msg: error.response?.data?.msg || 'Email no registrado: No Exitoso',
-        display: true,
-        error: true,
+        msg: error.response?.data?.msg || 'Email no registrado: No Exitoso', // Mensaje de error, si lo hay
+        display: true, // Indica que el mensaje debe mostrarse
+        error: true, // Indica que hubo un error
       });
 
     } finally {
 
+      // Espera 5 segundos antes de ocultar el mensaje de estado
       await new Promise(resolve => setTimeout(resolve, 5000));
+      // Resetea el mensaje en el estado
       setMessage({
-        msg: '',
-        error: '',
-        display: false,
+        msg: '', // Limpia el mensaje
+        error: '', // Limpia el estado de error
+        display: false, // Oculta el mensaje
       });
 
     };

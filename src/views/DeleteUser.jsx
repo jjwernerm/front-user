@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { PiSpinnerGapBold } from "react-icons/pi";
-import useAuth from "../hooks/useAuth.jsx";
+import useAuth from "../hooks/useAuth.jsx"; // Hook personalizado para la autenticación.
 import Header from '../components/Header.jsx';
 
 export default function DeleteUser() {
@@ -9,47 +9,57 @@ export default function DeleteUser() {
   const [email, setEmail] = useState('');
   const [spinner, setSpinner] = useState(false);
   const [message, setMessage] = useState({});
-  const { auth, deleteUser, logOut } = useAuth({});
 
-  const handleEmailValue = (e) => {
-    e.preventDefault();
-    const value = e.target.value.toLowerCase();
-    setEmail(value);
-  };
+// Desestructuración del hook personalizado useAuth para acceder a las funciones auth, deleteUser y logOut.
+const { auth, deleteUser, logOut } = useAuth({});
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+// Función para manejar el cambio de valor en el input de correo electrónico.
+const handleEmailValue = (e) => {
+  e.preventDefault();
+  const value = e.target.value.toLowerCase(); // Convierte el valor ingresado a minúsculas.
+  setEmail(value); // Actualiza el estado del correo con el valor ingresado.
+};
 
-    if (auth.email === email) {
-      
-      setSpinner(true);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSpinner(false);
+// Función que maneja el envío del formulario cuando el usuario solicita eliminar su cuenta.
+const handleSubmit = async e => {
+  e.preventDefault(); // Prevenir el comportamiento por defecto del formulario.
 
-      const resData = await deleteUser()
-      setMessage(resData)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+  // Verifica si el correo ingresado coincide con el correo del usuario autenticado.
+  if (auth.email === email) {
 
-      await logOut()
+    // Si el correo es correcto, muestra el spinner indicando que se está procesando la solicitud.
+    setSpinner(true);
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Simula un retraso para la operación.
+    setSpinner(false); // Detiene el spinner después del retraso.
 
-    } else {
-      
-      setMessage({
-        msg: 'El correo electrónico no coincide con el usuario a eliminar',
-        display: true,
-        error: true,
-      });
-      await new Promise(resolve => setTimeout(resolve, 5000));
+    // Llama a la función deleteUser para eliminar la cuenta y guarda la respuesta en resData.
+    const resData = await deleteUser();
+    setMessage(resData); // Establece el mensaje de respuesta basado en el resultado de la operación.
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Espera 2 segundos para mostrar el mensaje.
 
-    };
+    // Llama a la función logOut para cerrar sesión después de eliminar la cuenta.
+    await logOut();
+    
+  } else {
 
+    // Si el correo no coincide, muestra un mensaje de error.
     setMessage({
-      msg: '',
-      error: '',
-      display: false,
+      msg: 'El correo electrónico no coincide con el usuario a eliminar', // Mensaje de error.
+      display: true, // Muestra el mensaje de error.
+      error: true, // Indica que es un mensaje de error.
     });
+    await new Promise(resolve => setTimeout(resolve, 5000)); // Espera 5 segundos antes de ocultar el mensaje de error.
 
   };
+
+  // Restablece el estado del mensaje para ocultarlo después de un tiempo.
+  setMessage({
+    msg: '', // Vacía el mensaje.
+    error: '', // Vacía el estado del error.
+    display: false, // Oculta el mensaje.
+  });
+
+};
 
   return (
 

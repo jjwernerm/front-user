@@ -29,9 +29,6 @@ export default function App() {
         <AuthProvider>
           <Routes>
 
-
-
-
             {/* Public Routes */}
             <Route path='/' element={<LayoutPublic />}>
               <Route index element={<Loging />} />
@@ -62,3 +59,10 @@ export default function App() {
   );
 
 };
+
+// EXPLICACIÓN GENERAL
+// -BrowserRouter: Envoltorio que habilita el enrutamiento basado en la URL en React.
+// -AuthProvider: Proveedor que comparte el contexto de autenticación a lo largo de toda la aplicación.
+// -Routes: Contenedor que administra las rutas definidas.
+// -Páginas públicas y privadas: Separación lógica entre rutas accesibles para todos y aquellas protegidas (como el dashboard) dentro de diferentes layouts.
+// -Wildcard (*): Ruta genérica para capturar cualquier URL no definida y mostrar un error 404.

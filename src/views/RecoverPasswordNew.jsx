@@ -10,57 +10,64 @@ export default function RecoverPasswordToken() {
   const [spinner, setSpinner] = useState(false);
   const [login, setLogin] = useState(false);
   const [message, setMessage] = useState({});
-  const params = useParams();
-  const { token } = params;
+  const params = useParams();  // Hook que captura los parámetros de la URL (en este caso el token)
+  const { token } = params;  // Desestructuramos el token de la URL
 
+  // Función que maneja el valor de la contraseña nueva.
   const handlePasswordValue = (e) => {
     e.preventDefault();
     const value = e.target.value;
     setPassword(value);
   };
 
+  // Función que maneja el valor de la confirmación de la contraseña.
   const handleConfirmPasswordValue = (e) => {
     e.preventDefault();
     const value = e.target.value;
     setConfirmPassword(value);
   };
 
+  // Función que maneja el envío del formulario de recuperación de contraseña.
   const handleSubmit = async e => {
     e.preventDefault();
 
+    // Validación de que las contraseñas coinciden
+    if (password !== confirmPassword) {
+      setMessage({
+        msg: 'Las contraseñas no coinciden',
+        display: true,
+        error: true,
+      });
+      setPassword('');  // Limpiamos los campos de contraseña
+      setConfirmPassword('');
+      return;  // No enviamos la solicitud si las contraseñas no coinciden
+    }
+
     try {
+      const url = `/recover-password/${token}`;  // URL para la recuperación de contraseña con el token
+      const response = await configAxios.post(url, { password, token });  // Hacemos la petición para cambiar la contraseña
 
-      if (password != confirmPassword) {
-        setMessage({
-          msg: 'Las contraseñas no coinciden',
-          display: true,
-          error: true,
-        });
-        setPassword('');
-        setConfirmPassword('');
-        return;
-      };
-
-      const url = `/recover-password/${token}`;
-      const response = await configAxios.post(url, { password, token });
-
+      // Activamos el spinner mientras procesamos la solicitud
       setSpinner(true);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 2000));  // Esperamos 2 segundos (simulación de carga)
       setSpinner(false);
 
+      // Limpiamos los campos de contraseña
       setPassword('');
       setConfirmPassword('');
 
+      // Mostramos un mensaje de éxito si la respuesta es positiva
       setMessage({
         msg: response?.data?.msg || 'Nueva Contraseña: Exitosa',
         display: true,
         error: false,
       });
 
+      // Indicamos que el usuario puede iniciar sesión
       setLogin(true);
 
     } catch (error) {
-
+      // En caso de error, mostramos un mensaje de error
       setMessage({
         msg: error.response?.data?.msg || 'Nueva Contraseña: No Exitosa',
         display: true,
@@ -68,18 +75,15 @@ export default function RecoverPasswordToken() {
       });
       setPassword('');
       setConfirmPassword('');
-
     } finally {
-
+      // Reseteamos el mensaje después de 5 segundos
       await new Promise(resolve => setTimeout(resolve, 5000));
       setMessage({
         msg: '',
         error: '',
         display: false,
       });
-
-    };
-
+    }
   };
 
   return (

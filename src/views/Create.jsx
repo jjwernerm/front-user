@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { NavLink } from "react-router-dom";
 import { PiSpinnerGapBold } from "react-icons/pi";
-import configAxios from '../config/axios.jsx';
+import configAxios from '../config/axios.jsx'; // Se importa la configuración de Axios desde `config/axios.jsx` para realizar la solicitud HTTP.
 
 export default function Create() {
 
+  // Definimos el estado local para los campos del formulario y los mensajes
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('Actualizar...');
+  const [address, setAddress] = useState('Actualizar...');
   const [spinner, setSpinner] = useState(false);
   const [message, setMessage] = useState({});
 
+  // Funciones para manejar los cambios en los campos del formulario
   const handleNameValue = (e) => {
     e.preventDefault();
     const value = e.target.value;
@@ -22,7 +24,7 @@ export default function Create() {
 
   const handleEmailValue = (e) => {
     e.preventDefault();
-    const value = e.target.value.toLowerCase();
+    const value = e.target.value.toLowerCase(); // Convertimos el email a minúsculas
     setEmail(value);
   };
 
@@ -38,36 +40,38 @@ export default function Create() {
     setConfirmPassword(value);
   };
 
+  // Función que maneja el envío del formulario
   const handleSubmit = async e => {
     e.preventDefault();
 
     try {
-
+      // Comprobamos si las contraseñas coinciden
       if (password != confirmPassword) {
         setMessage({
           msg: 'Las contraseñas no coinciden',
           display: true,
           error: true,
         });
-        setPassword('');
+        setPassword(''); // Limpiamos las contraseñas
         setConfirmPassword('');
         return;
       };
 
-      setPhone('Actualizar...')
-      setAddress('Actualizar...')
+      // Definimos la URL y realizamos la solicitud POST con los datos del formulario
       const url = '/create';
       const response = await configAxios.post(url, { name, email, password, address, phone });
 
-      setSpinner(true);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      setSpinner(true); // Mostramos el spinner mientras se procesa la solicitud
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulamos un retraso de 2 segundos
       setSpinner(false);
 
+      // Limpiamos los campos del formulario
       setName('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
 
+      // Mostramos un mensaje de éxito
       setMessage({
         msg: response?.data?.msg || 'Crear Cuenta: Exitosa',
         display: true,
@@ -76,16 +80,18 @@ export default function Create() {
 
     } catch (error) {
 
+      // Si hay un error en la solicitud, mostramos un mensaje de error
       setMessage({
         msg: error.response?.data?.msg || 'Crear Cuenta: No Exitosa',
         display: true,
         error: true,
       });
-      setPassword('');
+      setPassword('');// Limpiamos las contraseñas
       setConfirmPassword('');
 
     } finally {
 
+      // Después de 5 segundos, limpiamos el mensaje
       await new Promise(resolve => setTimeout(resolve, 5000));
       setMessage({
         msg: '',
@@ -100,6 +106,7 @@ export default function Create() {
   return (
 
     <>
+      {/* Estructura del formulario de creación de cuenta */}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -221,6 +228,7 @@ export default function Create() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
               >
+                {/* Operador ternario para el spinner */}
                 {spinner ? (
                   <div className="flex items-center">
                     <PiSpinnerGapBold className="animate-spin h-5 w-5 text-white mr-2" />
@@ -232,6 +240,7 @@ export default function Create() {
               </button>
             </div>
 
+            {/* Operador ternario para el mensaje de error o notificación */}
             <div className={message.display ? 'block' : 'hidden'}>
               <p
                 className={`

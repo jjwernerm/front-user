@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { PiSpinnerGapBold } from "react-icons/pi";
-import useAuth from "../hooks/useAuth.jsx";
+import useAuth from "../hooks/useAuth.jsx"; // Custom hook para el manejo de autenticación
 import Header from '../components/Header.jsx';
 
 export default function UpdatePassword() {
@@ -12,61 +12,76 @@ export default function UpdatePassword() {
   const [spinner, setSpinner] = useState(false);
   const [message, setMessage] = useState({});
 
-  const { auth, verifyPassword, updatePassword } = useAuth()
+  // Desestructuramos los métodos del hook useAuth para su uso en el componente
+  const { auth, verifyPassword, updatePassword } = useAuth();
 
+  // useEffect que se ejecuta cuando el componente se monta y actualiza el estado de userData con los datos de auth
   useEffect(() => {
-    setUserData(auth)
-  }, [auth])
+    setUserData(auth); // Asignamos los datos de la autenticación al estado userData
+  }, [auth]); // Este efecto se ejecutará cada vez que auth cambie.
 
+  // Función para manejar el cambio en el valor de la contraseña
   const handlePasswordValue = (e) => {
-    setPassword(e.target.value);
+    setPassword(e.target.value); // Actualizamos el estado de la contraseña con el valor ingresado
   };
 
+  // Función para manejar el cambio en el valor de la confirmación de la contraseña
   const handlePasswordConfirmValue = (e) => {
-    setPasswordConfirm(e.target.value);
+    setPasswordConfirm(e.target.value); // Actualizamos el estado de la confirmación con el valor ingresado
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  // Función que se ejecuta cuando se envía el formulario
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevenimos el comportamiento por defecto del formulario (recarga de la página)
 
-    if (userData.password != passwordConfirm) {
+    // Verificamos si las contraseñas ingresadas coinciden
+    if (userData.password !== passwordConfirm) {
+      // Si las contraseñas no coinciden, mostramos un mensaje de error
       setMessage({
-        msg: 'Las contraseñas no coinciden',
-        display: true,
-        error: true,
+        msg: 'Las contraseñas no coinciden', // Mensaje de error
+        display: true, // Indicamos que el mensaje debe ser visible
+        error: true, // Indicamos que es un mensaje de error
       });
+
+      // Esperamos 5 segundos antes de limpiar el mensaje de error
       await new Promise(resolve => setTimeout(resolve, 5000));
       setMessage({
-        msg: '',
-        error: '',
-        display: false,
+        msg: '', // Limpiamos el mensaje
+        error: '', // Limpiamos el error
+        display: false, // Ocultamos el mensaje
       });
+      
+      // Limpiamos los campos de usuario y confirmación de la contraseña
       setUserData('');
       setPasswordConfirm('');
-      return;
+      return; // Salimos de la función si las contraseñas no coinciden
     };
 
-    setSpinner(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setSpinner(false);
+    // Si las contraseñas coinciden, comenzamos la operación de actualización
+    setSpinner(true); // Activamos el spinner
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulamos un retraso de 2 segundos
+    setSpinner(false); // Desactivamos el spinner después de la espera
 
-    const resVerify = await verifyPassword(password)
+    // Verificamos la contraseña ingresada usando el método verifyPassword
+    const resVerify = await verifyPassword(password);
 
+    // Si la verificación falla, mostramos el mensaje de error
     if (resVerify.error === true) {
-      setMessage(resVerify)
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      setMessage(resVerify); // Establecemos el mensaje de error
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Esperamos 5 segundos antes de limpiar el mensaje
     } else if (resVerify.error === false) {
-      const resUpdate = await updatePassword(userData)
-      setMessage(resUpdate)
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Si la verificación es exitosa, procedemos a actualizar la contraseña
+      const resUpdate = await updatePassword(userData); // Llamamos a la función updatePassword para actualizar los datos
+      setMessage(resUpdate); // Establecemos el mensaje de éxito
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Esperamos 5 segundos antes de limpiar el mensaje
     };
 
+    // Limpiamos el mensaje después de mostrarlo
     setMessage({
-      msg: '',
-      error: '',
-      display: false,
+      msg: '', // Limpiamos el mensaje
+      error: '', // Limpiamos el error
+      display: false, // Ocultamos el mensaje
     });
-
   };
 
   return (
@@ -105,7 +120,7 @@ export default function UpdatePassword() {
               <input
                 id="password"
                 name="password"
-                type="text"
+                type="password"
                 required
                 autoComplete="current-password"
                 value={password}
@@ -130,7 +145,7 @@ export default function UpdatePassword() {
               <input
                 id="password-new"
                 name="password"
-                type="text"
+                type="password"
                 required
                 autoComplete="current-password"
                 value={userData.password || ''}
@@ -138,6 +153,7 @@ export default function UpdatePassword() {
                   ...userData,
                   [e.target.name]: e.target.value
                 })}
+                // *Esta línea de código se desglosa en el archivo <Update.jsx> al final del código para entender paso a paso
                 className="block w-full rounded-md py-1.5 text-gray-900
                   shadow-sm pl-2 sm:text-sm sm:leading-6
                   border-0 outline-none
@@ -158,7 +174,7 @@ export default function UpdatePassword() {
               <input
                 id="password-confirm"
                 name="password-confirm"
-                type="text"
+                type="password"
                 required
                 autoComplete="current-password"
                 value={passwordConfirm}

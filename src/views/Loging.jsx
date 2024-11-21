@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { PiSpinnerGapBold } from "react-icons/pi";
-import configAxios from '../config/axios.jsx';
-import { useAuth } from '../hooks/useAuth.jsx';
+import configAxios from '../config/axios.jsx';  // Importa la configuración de Axios para realizar solicitudes HTTP
+import { useAuth } from '../hooks/useAuth.jsx';  // Importa el hook 'useAuth' para gestionar la autenticación
 
 export default function Loging() {
 
-  const [email, setEmail] = useState('joannywerner@hotmail.com');
-  const [password, setPassword] = useState('123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [spinner, setSpinner] = useState(false);
   const [message, setMessage] = useState({});
 
-  const { setAuth }  = useAuth();
+  const { setAuth }  = useAuth();  // Utiliza el hook 'useAuth' para establecer la autenticación en el contexto
 
-  const navigate = useNavigate();
+  const navigate = useNavigate();  // Hook para redirigir a otra ruta una vez que el usuario inicia sesión
 
   const handleEmailValue = (e) => {
     e.preventDefault();
@@ -27,42 +27,36 @@ export default function Loging() {
     setPassword(value);
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();    
+  const handleSubmit = async e => {  // Función para manejar el envío del formulario de inicio de sesión
+    e.preventDefault();  // Previene el comportamiento por defecto del formulario (recarga de la página)
 
     try {
+      const url = '/loging';  // URL del endpoint de inicio de sesión
+      const { data } = await configAxios.post(url, { email, password });  // Realiza una solicitud POST con el correo y la contraseña
+      localStorage.setItem('bearer_token', data.bearer_token);  // Guarda el token JWT recibido en el almacenamiento local
+      setAuth(data);  // Establece el usuario autenticado en el contexto
 
-      const url = '/loging';
-      const  { data } = await configAxios.post(url, { email, password });
-      localStorage.setItem('bearer_token', data.bearer_token);
-      setAuth(data);
+      setSpinner(true);  // Activa el spinner de carga
+      await new Promise(resolve => setTimeout(resolve, 2000));  // Simula una pausa de 2 segundos
+      setSpinner(false);  // Desactiva el spinner de carga
 
-      setSpinner(true);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSpinner(false);
+      navigate('/web-user');  // Redirige al usuario a la ruta '/web-user' después de un inicio de sesión exitoso
 
-      navigate('/web-user');
-
-    } catch (error) {
-
+    } catch (error) {  // Maneja los errores en caso de que la solicitud falle
       setMessage({
-        msg: error.response?.data?.msg || 'Iniciar Sesión: No Exitosa',
-        display: true,
-        error: true,
+        msg: error.response?.data?.msg || 'Iniciar Sesión: No Exitosa',  // Mensaje de error si la solicitud falla
+        display: true,  // Muestra el mensaje de error
+        error: true,  // Marca el mensaje como error
       });
-      setPassword('');
-
-    } finally {
-
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      setPassword('');  // Borra la contraseña en caso de error
+    } finally {  // Bloque que siempre se ejecuta, sin importar si la solicitud fue exitosa o fallida
+      await new Promise(resolve => setTimeout(resolve, 5000));  // Espera 5 segundos antes de borrar el mensaje
       setMessage({
-        msg: '',
-        error: '',
-        display: false,
+        msg: '',  // Borra el mensaje de error o éxito
+        error: '',  // Borra el estado de error
+        display: false,  // Oculta el mensaje
       });
-
     };
-
   };
 
   return (
