@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/confirm-user/:token", "destination": "/index.html" }
+  ]
+}
