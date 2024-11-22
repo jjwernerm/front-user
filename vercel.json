@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/confirm-user/:token", "destination": "/index.html" }
+    { "source": "/confirm-user/:token", "destination": "/index.html" },
+    { "source": "/recover-password/:token", "destination": "/index.html" }
   ]
 }
